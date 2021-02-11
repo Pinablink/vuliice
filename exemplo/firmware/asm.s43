@@ -38,15 +38,37 @@ VERIFICAR_CONTEUDO:     MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
                         CALL     #VULIICE_EXEC_OPER
                         CMP.B    #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
                         JEQ      D_ERRO_ESTRUTURAL
+                        CMP.B    #IBYTE_ERRO_FORMATO_SERIAL_QT_MARK,&CONF_STATUS_PROCESS
+                        JEQ      D_ERRO_ESTRUTURAL_QTMK
                         JMP      GOGO
-D_ERRO_ESTRUTURAL:      MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
+D_ERRO_ESTRUTURAL:      CALL     #LIMPEZA_RECURSOS
+                        MOV.B    #OPER_CRIAR_ERRO_ESTRUTURAL_MENSAGEM,VULIICE_OPER
+                        CALL     #VULIICE_EXEC_OPER
+                        CALL     #AJUSTE_RECURSOS
+                        JMP      GOGO
+D_ERRO_ESTRUTURAL_QTMK: CALL     #LIMPEZA_RECURSOS
+                        MOV.B    #OPER_CRIAR_ERRO_ESTRUTURAL_QTMK_MENSAGEM,VULIICE_OPER
+                        CALL     #VULIICE_EXEC_OPER
+                        CALL     #AJUSTE_RECURSOS
+GOGO:                   NOP
+                        MOV.B    #OPER_RECEBER_DADOS_SERIAL,VULIICE_OPER
+                        MOV.B    #IBYTE_PROCESSO_AGUARDANDO,&CONF_STATUS_PROCESS
+                        JMP      CONT_PROCESS
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+LIMPEZA_RECURSOS
+;----------------------------------------------------------------------------------------------
+                        MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
                         CALL     #VULIICE_EXEC_OPER
                         MOV.B    #OPER_EXCLUIR_MENSAGEM_SERIAL_MEM_RAM,VULIICE_OPER
                         CALL     #VULIICE_EXEC_OPER     
                         MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
                         CALL     #VULIICE_EXEC_OPER
-                        MOV.B    #OPER_CRIAR_ERRO_ESTRUTURAL_MENSAGEM,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
+                        RET
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+AJUSTE_RECURSOS
+;----------------------------------------------------------------------------------------------
                         MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
                         CALL     #VULIICE_EXEC_OPER
                         MOV.B    #OPER_RETORNAR_ERRO_ESTRUTURA_SERIAL,VULIICE_OPER
@@ -59,12 +81,8 @@ D_ERRO_ESTRUTURAL:      MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
                         CALL     #VULIICE_EXEC_OPER
                         MOV.B    #000H,&LEN_SERIAL_MESSAGE
                         MOV.B    #000H,&LEN_I_MESSAGE
-GOGO:                   NOP
-                        MOV.B    #OPER_RECEBER_DADOS_SERIAL,VULIICE_OPER
-                        MOV.B    #IBYTE_PROCESSO_AGUARDANDO,&CONF_STATUS_PROCESS
-                        JMP      CONT_PROCESS
+                        RET
 ;----------------------------------------------------------------------------------------------
-
 ;----------------------------------------------------------------------------------------------
 LIMPAR_RAM_500BYTES; 
 ;----------------------------------------------------------------------------------------------

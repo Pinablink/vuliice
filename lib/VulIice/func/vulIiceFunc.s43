@@ -85,7 +85,17 @@ EXC_CARAC1:                 MOV.B     #0B0H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR
 ;----------------------------------------------------------------------------------------------
 VALIDAR_CONTEUDO
 ;----------------------------------------------------------------------------------------------
-LOOP_VALID:                 CMP.W     #000H,SUPORTE_CONTADOR_SERIAL_1
+                            CALL      #VALIDAR_PRIMEIRO_CARACTER
+                            CMP.B     #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
+                            JEQ       CONTINUE_OUT
+VER_CHAVES_ABR_FECH:        CALL      #VALIDAR_CHAVE_ESTRUTURAL    
+                            CMP.B     #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
+                            JEQ       CONTINUE_OUT
+                            CALL      #COLETAR_VALIDAR_JSON_REGRA_1A
+                            CMP.B     #IBYTE_ERRO_FORMATO_SERIAL_QT_MARK,&CONF_STATUS_PROCESS
+                            JEQ       CONTINUE_OUT
+                            NOP
+/*LOOP_VALID:                 CMP.W     #000H,SUPORTE_CONTADOR_SERIAL_1
                             JEQ       VALIDAR_CARAC_1
 VALIDAR_CARAC_1:            CMP.B     #07BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             JEQ       CARAC1_OK
@@ -95,8 +105,46 @@ ERRO_ESTRUTURAL1:           MOV.B     #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STAT
 CARAC1_OK:                  INC.W     SUPORTE_CONTADOR_SERIAL_1
                             JMP       CONTINUE_OUT
 BREAK:                      CMP.W     &LEN_SERIAL_MESSAGE,SUPORTE_CONTADOR_SERIAL_1
-                            JNZ       LOOP_VALID
+                            JNZ       LOOP_VALID*/
 CONTINUE_OUT:               RET
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+VALIDAR_PRIMEIRO_CARACTER
+;----------------------------------------------------------------------------------------------
+                            CMP.B     #07BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            JEQ       CARAC1_OK
+                            MOV.B     #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
+CARAC1_OK:                  RET
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+VALIDAR_CHAVE_ESTRUTURAL
+;----------------------------------------------------------------------------------------------
+                            MOV.W     &LEN_SERIAL_MESSAGE,SUPORTE_CONTADOR_SERIAL_1    
+                            DEC.W     SUPORTE_CONTADOR_SERIAL_1
+                            CMP.B     #07DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            JEQ       CARAC_CH_OK
+                            MOV.B     #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
+CARAC_CH_OK:                RET
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+COLETAR_VALIDAR_JSON_REGRA_1A ; VALIDA A QUANTIDADE DE ASPAS. PARA A ESTRUTURA JSON ESTA CORRETA EM PRIMEIRA ANALISE
+                              ; DEVE POSSUIR UM NÚMERO PAR DE ASPAS
+;----------------------------------------------------------------------------------------------
+                            MOV.W     #000H,SUPORTE_CONTADOR_SERIAL_1
+                            MOV.W     #000H,SUPORTE_CONTADOR_SERIAL_2
+LOOP_COL1:                  CMP.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            JEQ       COMPUTE_COL1
+                            JMP       CTR_LOOP1
+COMPUTE_COL1:               INC.W     SUPORTE_CONTADOR_SERIAL_2
+CTR_LOOP1:                  CMP.W     SUPORTE_CONTADOR_SERIAL_1,&LEN_SERIAL_MESSAGE
+                            JEQ       AN_RESULT1
+                            INC.W     SUPORTE_CONTADOR_SERIAL_1
+                            JMP       LOOP_COL1
+AN_RESULT1:                 RRA.W     SUPORTE_CONTADOR_SERIAL_2
+                            JC        ERRO_COMPUTE_QT_MARK
+                            JMP       SCAN_FIN
+ERRO_COMPUTE_QT_MARK:       MOV.B     #IBYTE_ERRO_FORMATO_SERIAL_QT_MARK,&CONF_STATUS_PROCESS
+SCAN_FIN:                   RET
 ;----------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------
         END

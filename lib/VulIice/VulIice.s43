@@ -14,7 +14,7 @@
 ;----------------------------------------------------------------------------------------------
         NAME   VULIICE
         PUBLIC VULIICE_EXEC_OPER
-        EXTERN LIMPA_SERIAL_CONTADORES, PROCESSAMENTO_ENTRADA, RETORNO_MENSAGEM, EXCLUIR_MENSAGEM, EXCLUIR_MENSAGEM_ENVIADA, VALIDAR_CONTEUDO, CRIAR_ERROR_ESTRUTURAL_MSG
+        EXTERN LIMPA_SERIAL_CONTADORES, PROCESSAMENTO_ENTRADA, RETORNO_MENSAGEM, EXCLUIR_MENSAGEM, EXCLUIR_MENSAGEM_ENVIADA, VALIDAR_CONTEUDO, CRIAR_ERROR_ESTRUTURAL_MSG, CRIAR_ERROR_ESTRUTURAL_QT_MARKS
         RSEG   CODE   
 ;----------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------
@@ -55,7 +55,12 @@ VER7:   CMP.B   #OPER_CRIAR_ERRO_ESTRUTURAL_MENSAGEM,VULIICE_OPER
         JMP     VER8
 RUN7:   CALL    #CRIAR_ERROR_ESTRUTURAL_MSG
         JMP     VBYE
-VER8:   NOP        
+VER8:   CMP.B   #OPER_CRIAR_ERRO_ESTRUTURAL_QTMK_MENSAGEM,VULIICE_OPER
+        JEQ     RUN8
+        JMP     VER9
+RUN8:   CALL    #CRIAR_ERROR_ESTRUTURAL_QT_MARKS
+        JMP     VBYE
+VER9:   NOP
 VBYE:   NOP
         RET
 ;----------------------------------------------------------------------------------------------
