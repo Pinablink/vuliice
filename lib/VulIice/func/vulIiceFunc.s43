@@ -13,7 +13,7 @@ LIMPA_SERIAL_CONTADORES
 ;----------------------------------------------------------------------------------------------
         MOV.W      #00000H,SUPORTE_CONTADOR_SERIAL_1
         MOV.W      #00000H,SUPORTE_CONTADOR_SERIAL_2
-        MOV.W      #00000H,SUPORTE_CONTADOR_SERIAL_3
+        MOV.W      #00000H,CARACTER 
         RET
 ;----------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------
@@ -46,18 +46,17 @@ BYE:              BIC.B      #UCSWRST,&UCA0CTL1 ;
 ;----------------------------------------------------------------------------------------------
 RETORNO_MENSAGEM
 ;----------------------------------------------------------------------------------------------
-                            MOV.W     #00H,SUPORTE_CONTADOR_SERIAL_1
-                            MOV.W     #00H,SUPORTE_CONTADOR_SERIAL_2     
-INPUT_DATA_TESTE_AT_SEND:   MOV.B     CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1),SUPORTE_CONTADOR_SERIAL_2                         
-TX_SEND_AT_BUSY:            BIT.B     #UCBUSY,&UCA0STAT
-                            JNZ       TX_SEND_AT_BUSY
-                            BIS.B     #BIT0,&P1OUT
-                            MOV.B     SUPORTE_CONTADOR_SERIAL_2,&UCA0TXBUF
-                            BIS.B     #UCA0TXIFG,&IFG2 ; LIBERA A FLAG PARA COMUNICAÇÃO
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            CMP.B     &LEN_I_MESSAGE,SUPORTE_CONTADOR_SERIAL_1
-                            JNZ       INPUT_DATA_TESTE_AT_SEND
-                            MOV.W     #000H,SUPORTE_CONTADOR_SERIAL_1
+                            MOV.W    #00H,SUPORTE_CONTADOR_SERIAL_1
+                            MOV.W    #00H,SUPORTE_CONTADOR_SERIAL_2     
+INPUT_DATA_TESTE_AT_SEND:   MOV.B    CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1),SUPORTE_CONTADOR_SERIAL_2                         
+TX_SEND_AT_BUSY:            BIT.B    #UCBUSY,&UCA0STAT
+                            JNZ      TX_SEND_AT_BUSY
+                            MOV.B    SUPORTE_CONTADOR_SERIAL_2,&UCA0TXBUF
+                            BIS.B    #UCA0TXIFG,&IFG2 ; LIBERA A FLAG PARA COMUNICAÇÃO
+                            INC.B    SUPORTE_CONTADOR_SERIAL_1
+                            CMP.B    &LEN_I_MESSAGE,SUPORTE_CONTADOR_SERIAL_1
+                            JNZ      INPUT_DATA_TESTE_AT_SEND
+                            MOV.W    #000H,SUPORTE_CONTADOR_SERIAL_1
                             RET
 ;----------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------
@@ -85,66 +84,149 @@ EXC_CARAC1:                 MOV.B     #0B0H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR
 ;----------------------------------------------------------------------------------------------
 VALIDAR_CONTEUDO
 ;----------------------------------------------------------------------------------------------
-                            CALL      #VALIDAR_PRIMEIRO_CARACTER
-                            CMP.B     #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
-                            JEQ       CONTINUE_OUT
-VER_CHAVES_ABR_FECH:        CALL      #VALIDAR_CHAVE_ESTRUTURAL    
-                            CMP.B     #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
-                            JEQ       CONTINUE_OUT
-                            CALL      #COLETAR_VALIDAR_JSON_REGRA_1A
-                            CMP.B     #IBYTE_ERRO_FORMATO_SERIAL_QT_MARK,&CONF_STATUS_PROCESS
-                            JEQ       CONTINUE_OUT
-                            NOP
-/*LOOP_VALID:                 CMP.W     #000H,SUPORTE_CONTADOR_SERIAL_1
-                            JEQ       VALIDAR_CARAC_1
-VALIDAR_CARAC_1:            CMP.B     #07BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            JEQ       CARAC1_OK
-ERRO_ESTRUTURAL1:           MOV.B     #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
-                            MOV.W     &LEN_SERIAL_MESSAGE,SUPORTE_CONTADOR_SERIAL_1
-                            JMP       BREAK
-CARAC1_OK:                  INC.W     SUPORTE_CONTADOR_SERIAL_1
-                            JMP       CONTINUE_OUT
-BREAK:                      CMP.W     &LEN_SERIAL_MESSAGE,SUPORTE_CONTADOR_SERIAL_1
-                            JNZ       LOOP_VALID*/
+                            CALL     #VALIDAR_CONTEUDO_ESTRUTURA
+                            RET
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+VALIDAR_CONTEUDO_ESTRUTURA
+;----------------------------------------------------------------------------------------------
+                            MOV.W    #000H,JSON_STRUCT_STATUS
+                            MOV.W    #000H,SUPORTE_CONTADOR_SERIAL_1
+                            MOV.W    #000H,SUPORTE_CONTADOR_SERIAL_2
+                            MOV.W    &LEN_SERIAL_MESSAGE,SUPORTE_CONTADOR_SERIAL_1
+CONTINUE_LOOP:              CMP.B    #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JEQ      QUEBRA
+                            CMP.B    #00AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JEQ      QUEBRA
+                            CMP.B    #020H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JEQ      ESPACO
+                            CMP.B    #07BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JEQ      ABERTURA_JSON
+                            CMP.B    #03AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JEQ      LIMITE_CHAVE_VALOR
+                            CMP.B    #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JEQ      ASPAS_CTR
+                            CMP.B    #07DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JEQ      FECHAMENTO
+                            CMP.B    #02CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JEQ      IN_VIRGULA
+                            CMP.B    #03BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JEQ      CTR_LOOP ; >>>
+                            ; 030H A 039H -> REPRESENTA NUMEROS | 041H A 05AH -> REPRESENTA CARACTERES EM MAIUSCULO
+                            ; 061H A 07AH -> REPRESENTA CARACTERES EM MINUSUCULO
+                            ;CMP.B   #030H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)     
+                            MOV.B    #030H,CARACTER ; PONTO DE AVALIAÇÃO
+                            CMP.B    CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2) ; DESTINO < FONTE = USO DO JNC OK. VERIFICAR DOCUMENTAÇÃO DO mCU PARA MAIS DETALHES
+                            JNC      ERROR_CARACTER_IN ; CARACTER ESPECIAL
+                            MOV.B    #041H,CARACTER ; PONTO DE AVALIAÇÃO
+                            CMP.B    CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            MOV.B    #000H,&03E0H ; ESPAÇO DA MEMÓRIA QUE ESTA LIVRE
+                            JNC      LIMITE_30_41  
+                            // JC       VER_CARACTER
+                            JMP      CTR_LOOP ; >>>
+                            
+;--------------------------- AREA PARA ANALISE DE CARACTER ESPECIAL ---------------------------------------------
+LIMITE_30_41:               CMP.B    #005H,&03E0H
+                            JEQ      CARAC_NO_LIMITE
+                            INC.B    &03E0H
+                            DEC.B    CARACTER
+                            CMP.B    CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JNC      LIMITE_30_41
+FORA_LIMITE_30_41:          NOP
+CARAC_NO_LIMITE:            JMP      CTR_LOOP ; >>>                            
+;--------------------------- FIM DA AREA PARA ANALISE DE CARACTER ESPECIAL --------------------------------------
+
+;--------------------------- AREA DE ANALISE DE INCLUSAO DE : ---------------------------------------------------
+LIMITE_CHAVE_VALOR:         BIT.W   #BIT0,JSON_STRUCT_STATUS
+                            JC      VER_ABERTURA
+                            JMP     ERRO_ESTRUTURAL
+VER_ABERTURA:               BIT.W   #BIT1,JSON_STRUCT_STATUS
+                            JC      VER_CONTEUDO
+                            JMP     ERRO_UNK_CHAVE_CONTEUDO
+VER_CONTEUDO:               BIT.W   #BIT3,JSON_STRUCT_STATUS
+                            JC      VER_FECHAMENTO
+                            JMP     ERRO_UNK_CHAVE_CONTEUDO
+VER_FECHAMENTO:             BIT.W   #BIT2,JSON_STRUCT_STATUS
+                            JC      CONTEUDO_CHAVE_OK
+                            JMP     ERRO_UNK_CHAVE_CONTEUDO
+CONTEUDO_CHAVE_OK:          NOP
+                            JMP     CTR_LOOP ; >>>  
+ERRO_ESTRUTURAL:            MOV.B   #IBYTE_ERRO_FORMATO_UNKNOW_JSON,&CONF_STATUS_PROCESS
+                            JMP     CONTINUE_OUT    
+ERRO_UNK_CHAVE_CONTEUDO:    MOV.B   #IBYTE_ERRO_QUOT_MARKS_UNK_KEY_CONTEN,&CONF_STATUS_PROCESS
+                            JMP     CONTINUE_OUT                            
+;--------------------------- FIM DA AREA DE ANALISE DE INCLUSAO DE : --------------------------------------------
+
+;--------------------------- AREA DE ANALISE DE INCLUSAO DE CARACTER --------------------------------------------
+VER_CARACTER:               BIT.W   #BIT1,JSON_STRUCT_STATUS; VERIFICA SE JÁ HOUVE ABERTURA DE ASPAS
+                            JC      CONTINUE_OBTENCAO
+                            JMP     ERROR_CARACTER_IN    
+
+CONTINUE_OBTENCAO:          NOP
+                            JMP    CTR_LOOP ; >>>      
+
+ERROR_CARACTER_IN:          MOV.B    #IBYTE_ERRO_FORMATO_UNKNOW_JSON,&CONF_STATUS_PROCESS
+                            JMP      CONTINUE_OUT
+
+;--------------------------- FIM DA AREA DE ANALISE DE INCLUSAO DE CARACTER -------------------------------------
+;--------------------------- AREA DE ANALISE DE INCLUSAO DE , ---------------------------------------------------
+IN_VIRGULA                  BIS.W    #BIT8,JSON_STRUCT_STATUS   
+                            NOP ; NECESSARIO IMPLEMENTAR OUTRAS VALIDAÇÕES QUE PERTINENTES A VIRGULA
+                            JMP       CTR_LOOP ; >>>     
+;--------------------------- FIM DA AREA DE ANALISE DE INCLUSAO DE , --------------------------------------------
+;--------------------------- AREA DE ANALISE DE FECHAMENTO } ----------------------------------------------------
+FECHAMENTO:                 BIT.W    #BIT0,JSON_STRUCT_STATUS
+                            JC       VER_VIRGULA
+                            JMP      ERROR_FECHAMENTO_INVALIDO
+VER_VIRGULA:                BIT.W    #BIT8,JSON_STRUCT_STATUS
+                            JC       FIM_DADOS_INF
+                            JMP      VER_DADOS
+FIM_DADOS_INF:              MOV.B    #IBYTE_ERRO_COMMA_CLOSING_NOT_ALLOWED,&CONF_STATUS_PROCESS
+                            JMP      CONTINUE_OUT      
+                            JMP      CTR_LOOP ; >>>
+VER_DADOS:                  NOP
+                            JMP      CTR_LOOP ; >>>
+ERROR_FECHAMENTO_INVALIDO:  MOV.B    #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS 
+                            JMP      CONTINUE_OUT
+;--------------------------- FIM DA AREA DE ANALISE DE FECHAMENTO -----------------------------------------------         
+
+;--------------------------- AREA DE ANALISE DE " ---------------------------------------------------------------
+ASPAS_CTR:                   BIT.W   #BIT1,JSON_STRUCT_STATUS; VERIFICA SE JÁ HOUVE ABERTURA DE ASPAS
+                             JC      VER_DADO_CONTEUDO
+                             JEQ     ABRINDO_CHAVE
+
+VER_DADO_CONTEUDO:           NOP
+                             JMP     CTR_LOOP ; >>>
+
+
+ABRINDO_CHAVE:              BIS.W    #BIT1,JSON_STRUCT_STATUS
+                            JMP      CTR_LOOP ; >>>
+;--------------------------- FIM AREA DE ANALISE DE " -------------------------------------------------------------
+
+;--------------------------- AREA DE INCLUSAO DE [ OU ] -----------------------------------------------------------
+
+;---------------------------- FIM DA ÁREA DE INCLUSÃO DE [ OU ] ---------------------------------------------------
+
+ABERTURA_JSON:              BIT.W    #BIT0,JSON_STRUCT_STATUS
+                            JC       OBJETO_INTERNO ;ESTA SETADO
+                            BIS.W    #BIT0,JSON_STRUCT_STATUS
+                            JMP      CTR_LOOP ; >>>
+OBJETO_INTERNO:             MOV.B    #IBYTE_ERRO_IN_OBJ_DUP_CUP,&CONF_STATUS_PROCESS ; AINDA NÃO COMPATIVEL COM OBJETOS INTERNOS 
+                            JMP      CONTINUE_OUT
+QUEBRA:                     NOP 
+                            JMP      CTR_LOOP
+ESPACO:                     NOP ; NECESSÁRIO ANALISAR COM MAIS ATENÇÃO ESSE PONTO....
+CTR_LOOP:                   CMP.W    SUPORTE_CONTADOR_SERIAL_2,SUPORTE_CONTADOR_SERIAL_1 
+                            JEQ      VER_EST_FINAL
+                            INC.W    SUPORTE_CONTADOR_SERIAL_2 
+                            JMP      CONTINUE_LOOP
+VER_EST_FINAL:              CMP.B    #000H,JSON_STRUCT_STATUS
+                            JEQ      JSON_NO
+                            JMP      FIN_VAL
+JSON_NO:                    MOV.B    #IBYTE_ERRO_FORMATO_UNKNOW_JSON,&CONF_STATUS_PROCESS 
+                            JMP      CONTINUE_OUT
+FIN_VAL:                    MOV.B    #IBYTE_SUCESSO_DADO_SERIAL,&CONF_STATUS_PROCESS                            
 CONTINUE_OUT:               RET
-;----------------------------------------------------------------------------------------------
-;----------------------------------------------------------------------------------------------
-VALIDAR_PRIMEIRO_CARACTER
-;----------------------------------------------------------------------------------------------
-                            CMP.B     #07BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            JEQ       CARAC1_OK
-                            MOV.B     #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
-CARAC1_OK:                  RET
-;----------------------------------------------------------------------------------------------
-;----------------------------------------------------------------------------------------------
-VALIDAR_CHAVE_ESTRUTURAL
-;----------------------------------------------------------------------------------------------
-                            MOV.W     &LEN_SERIAL_MESSAGE,SUPORTE_CONTADOR_SERIAL_1    
-                            DEC.W     SUPORTE_CONTADOR_SERIAL_1
-                            CMP.B     #07DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            JEQ       CARAC_CH_OK
-                            MOV.B     #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
-CARAC_CH_OK:                RET
-;----------------------------------------------------------------------------------------------
-;----------------------------------------------------------------------------------------------
-COLETAR_VALIDAR_JSON_REGRA_1A ; VALIDA A QUANTIDADE DE ASPAS. PARA A ESTRUTURA JSON ESTA CORRETA EM PRIMEIRA ANALISE
-                              ; DEVE POSSUIR UM NÚMERO PAR DE ASPAS
-;----------------------------------------------------------------------------------------------
-                            MOV.W     #000H,SUPORTE_CONTADOR_SERIAL_1
-                            MOV.W     #000H,SUPORTE_CONTADOR_SERIAL_2
-LOOP_COL1:                  CMP.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            JEQ       COMPUTE_COL1
-                            JMP       CTR_LOOP1
-COMPUTE_COL1:               INC.W     SUPORTE_CONTADOR_SERIAL_2
-CTR_LOOP1:                  CMP.W     SUPORTE_CONTADOR_SERIAL_1,&LEN_SERIAL_MESSAGE
-                            JEQ       AN_RESULT1
-                            INC.W     SUPORTE_CONTADOR_SERIAL_1
-                            JMP       LOOP_COL1
-AN_RESULT1:                 RRA.W     SUPORTE_CONTADOR_SERIAL_2
-                            JC        ERRO_COMPUTE_QT_MARK
-                            JMP       SCAN_FIN
-ERRO_COMPUTE_QT_MARK:       MOV.B     #IBYTE_ERRO_FORMATO_SERIAL_QT_MARK,&CONF_STATUS_PROCESS
-SCAN_FIN:                   RET
 ;----------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------
         END

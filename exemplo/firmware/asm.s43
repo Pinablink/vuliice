@@ -5,7 +5,7 @@
 ;----------------------------------------------------------------------------------------------
         NAME    MAIN   
         PUBLIC  MAIN
-        EXTERN VULIICE_EXEC_OPER
+        EXTERN PROCESSAMENTO_ENTRADA, VALIDAR_CONTEUDO, EXCLUIR_MENSAGEM, CRIAR_ERROR_ESTRUTURAL_MSG, CRIAR_ERROR_ESTRUTURAL_QT_MARKS, LIMPA_SERIAL_CONTADORES, EXCLUIR_MENSAGEM_ENVIADA, RETORNO_MENSAGEM, CRIAR_MENSAGEM_JSON_INEXISTENTE, CRIAR_MENSAGEM_VIRGULA_FINALIZACAO_ERRO, CRIAR_MENSAGEM_OBJETO_INTERNO_ERRO, CRIAR_MENSAGEM_RETORNO_SUCESSO, CRIAR_MENSAGEM_LINHA_NO_CHAVE
 ;----------------------------------------------------------------------------------------------
         RSEG    CSTACK                  
         RSEG    CODE                    
@@ -13,75 +13,29 @@
 ;----------------------------------------------------------------------------------------------
 RESET:                  MOV      #SFE(CSTACK), SP
 MAIN:                   MOV.W    #WDTPW+WDTHOLD,&WDTCTL
-                        ; BLOCO REFERENTE A IMPLEMENTACAO DA LIB. VERIFICA O STATUS RETORNADO PARA TOMADA DE DECISAO
+                        CMP.B    #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
+                        JEQ      RUN_
+                        CMP.B    #IBYTE_ERRO_FORMATO_SERIAL_QT_MARK,&CONF_STATUS_PROCESS
+                        JEQ      RUN_
                         CMP.B    #IBYTE_DADOS_RECEBIDOS,&CONF_STATUS_PROCESS
-                        JEQ      VERIFICAR_CONTEUDO
-                        ;
-GO_RUN:                 CALL     #LIMPAR_REGISTRADORES
+                        JEQ      RUN_
+                        CALL     #LIMPAR_REGISTRADORES
                         CALL     #LIMPAR_RAM_500BYTES
-                        CALL     #CONFIG_CLOCK_16MHZ
-                        CALL     #CONFIGURAR_UART_16MHZ
                         CALL     #CONFIGURAR_PORTAS 
+RUN_:                   CALL     #CONFIG_CLOCK_16MHZ
+                        CALL     #CONFIGURAR_UART_16MHZ
                         ; BLOCO REFERENTE A IMPLEMENTAÇÃO DA LIB
-                        MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
                         MOV.W    #IIBYTE_TAMANHO_DADOS,&CONF_LEN_DADOS ;INFORMA AQUI O TAMANHO DOS DADOS QUE SERÁ PROCESSADO NA PORTA SERIAL
-                        MOV.B    #OPER_RECEBER_DADOS_SERIAL,VULIICE_OPER
+                        MOV.B    #IBYTE_PROCESSO_AGUARDANDO,&CONF_STATUS_PROCESS
+                        MOV.B    #000H,&0208H
+                        MOV.B    #000H,&0209H
+                        CALL     #LIMPA_SERIAL_CONTADORES
                         ; FIM DO BLOCO REFERENTE A IMPLEMENTAÇÃO DA LIB
-                 
-CONT_PROCESS:           CALL     #HABILITAR_COMUNICACAO_SERIAL
+OK:                     CALL     #HABILITAR_COMUNICACAO_SERIAL
                         BIS.B    #CPUOFF+GIE,SR
                         NOP
-VERIFICAR_CONTEUDO:     MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
-                        MOV.B    #OPER_VALIDAR_CONTEUDO,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
-                        CMP.B    #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
-                        JEQ      D_ERRO_ESTRUTURAL
-                        CMP.B    #IBYTE_ERRO_FORMATO_SERIAL_QT_MARK,&CONF_STATUS_PROCESS
-                        JEQ      D_ERRO_ESTRUTURAL_QTMK
-                        JMP      GOGO
-D_ERRO_ESTRUTURAL:      CALL     #LIMPEZA_RECURSOS
-                        MOV.B    #OPER_CRIAR_ERRO_ESTRUTURAL_MENSAGEM,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
-                        CALL     #AJUSTE_RECURSOS
-                        JMP      GOGO
-D_ERRO_ESTRUTURAL_QTMK: CALL     #LIMPEZA_RECURSOS
-                        MOV.B    #OPER_CRIAR_ERRO_ESTRUTURAL_QTMK_MENSAGEM,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
-                        CALL     #AJUSTE_RECURSOS
-GOGO:                   NOP
-                        MOV.B    #OPER_RECEBER_DADOS_SERIAL,VULIICE_OPER
-                        MOV.B    #IBYTE_PROCESSO_AGUARDANDO,&CONF_STATUS_PROCESS
-                        JMP      CONT_PROCESS
-;----------------------------------------------------------------------------------------------
-;----------------------------------------------------------------------------------------------
-LIMPEZA_RECURSOS
-;----------------------------------------------------------------------------------------------
-                        MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
-                        MOV.B    #OPER_EXCLUIR_MENSAGEM_SERIAL_MEM_RAM,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER     
-                        MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
-                        RET
-;----------------------------------------------------------------------------------------------
-;----------------------------------------------------------------------------------------------
-AJUSTE_RECURSOS
-;----------------------------------------------------------------------------------------------
-                        MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
-                        MOV.B    #OPER_RETORNAR_ERRO_ESTRUTURA_SERIAL,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
-                        MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
-                        MOV.B    #OPER_EXCLUIR_MENSAGEM_MEM_RAM,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
-                        MOV.B    #OPER_LIMPEZA_CONTADORES_SERIAL,VULIICE_OPER
-                        CALL     #VULIICE_EXEC_OPER
-                        MOV.B    #000H,&LEN_SERIAL_MESSAGE
-                        MOV.B    #000H,&LEN_I_MESSAGE
-                        RET
+                        JMP      RESET
+                        NOP
 ;----------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------
 LIMPAR_RAM_500BYTES; 
@@ -133,7 +87,6 @@ LIMPAR_REGISTRADORES ;LIMPA OS REGISTRADORES DE USO GERAL
                 MOV.W     #00000H,R5
                 MOV.W     #00000H,R6
                 MOV.W     #00000H,R7
-                MOV.W     #00000H,R11
                 MOV.W     #00000H,R12
                 MOV.W     #00000H,R13
                 MOV.W     #00000H,R14
@@ -159,14 +112,70 @@ RECEPCAO
 ;----------------------------------------------------------------------------------------------           
 HOLD_ON:            BIT.B    #UCA0RXIFG,&IFG2    ;  RX Buffer ready
                     JZ       HOLD_ON 
-                    CALL     #VULIICE_EXEC_OPER
+                    CALL     #PROCESSAMENTO_ENTRADA
                     CMP.B    #IBYTE_DADOS_RECEBIDOS,&CONF_STATUS_PROCESS
                     JEQ      RECEP_FINALIZADO
                     JMP      CONTINUE_P
-RECEP_FINALIZADO:   MOV.W    #000H,VULIICE_OPER
-                    BIC.B    #UCA0RXIE,&IE2
+RECEP_FINALIZADO:   BIC.B    #UCA0RXIE,&IE2
+                    CALL     #VALIDAR_RETORNO
                     BIC      #CPUOFF+OSCOFF+SCG0+SCG1,0(SP)               
 CONTINUE_P:         RETI
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+VALIDAR_RETORNO
+;----------------------------------------------------------------------------------------------
+VERIFICAR_CONTEUDO:              CALL     #VALIDAR_CONTEUDO
+                                 CMP.B    #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
+                                 JEQ      D_ERRO_ESTRUTURAL
+                                 CMP.B    #IBYTE_ERRO_FORMATO_SERIAL_QT_MARK,&CONF_STATUS_PROCESS
+                                 JEQ      D_ERRO_ESTRUTURAL_QTMK
+                                 CMP.B    #IBYTE_ERRO_FORMATO_UNKNOW_JSON,&CONF_STATUS_PROCESS
+                                 JEQ      D_ERRO_ESTRUTURAL_UNK_JSON
+                                 CMP.B    #IBYTE_ERRO_COMMA_CLOSING_NOT_ALLOWED,&CONF_STATUS_PROCESS
+                                 JEQ      D_ERRO_ESTRUTURAL_COMMA_CLOSING
+                                 CMP.B    #IBYTE_ERRO_IN_OBJ_DUP_CUP,&CONF_STATUS_PROCESS  
+                                 JEQ      D_ERRO_ESTRUTURAL_OB_INC_DUP
+                                 CMP.B    #IBYTE_ERRO_QUOT_MARKS_UNK_KEY_CONTEN,&CONF_STATUS_PROCESS
+                                 JEQ      D_ERRO_EST_UNK_CHAVE_CONTEUDO
+                        
+                                 JMP      GOGO
+D_ERRO_ESTRUTURAL:               CALL     #EXCLUIR_MENSAGEM
+                                 CALL     #CRIAR_ERROR_ESTRUTURAL_MSG
+                                 JMP      FINGO
+D_ERRO_ESTRUTURAL_QTMK:          CALL     #EXCLUIR_MENSAGEM
+                                 CALL     #CRIAR_ERROR_ESTRUTURAL_QT_MARKS
+                                 JMP      FINGO
+D_ERRO_ESTRUTURAL_UNK_JSON:      CALL     #EXCLUIR_MENSAGEM
+                                 CALL     #CRIAR_MENSAGEM_JSON_INEXISTENTE
+                                 JMP      FINGO
+D_ERRO_ESTRUTURAL_COMMA_CLOSING: CALL     #EXCLUIR_MENSAGEM
+                                 CALL     #CRIAR_MENSAGEM_VIRGULA_FINALIZACAO_ERRO
+                                 JMP  FINGO
+D_ERRO_ESTRUTURAL_OB_INC_DUP:    CALL     #EXCLUIR_MENSAGEM
+                                 CALL     #CRIAR_MENSAGEM_OBJETO_INTERNO_ERRO
+                                 JMP  FINGO                                 
+
+D_ERRO_EST_UNK_CHAVE_CONTEUDO:   CALL     #EXCLUIR_MENSAGEM
+                                 CALL     #CRIAR_MENSAGEM_LINHA_NO_CHAVE
+                                 JMP  FINGO  
+
+
+GOGO:                            BIC.B    #BIT0,&P1OUT
+                                 BIS.B    #BIT6,&P1OUT
+                                 CALL     #EXCLUIR_MENSAGEM
+                                 CALL     #CRIAR_MENSAGEM_RETORNO_SUCESSO
+                                 NOP 
+
+FINGO:                           CALL     #LIMPA_SERIAL_CONTADORES
+                                 CALL     #RETORNO_MENSAGEM
+                                 BIS.B    #BIT0,&P1OUT
+                                 BIC.B    #BIT6,&P1OUT
+                                 CALL     #LIMPA_SERIAL_CONTADORES
+                                 CALL     #EXCLUIR_MENSAGEM_ENVIADA
+                                 MOV.B    #000H,&LEN_SERIAL_MESSAGE
+                                 MOV.B    #000H,&LEN_I_MESSAGE
+                                 CALL     #LIMPA_SERIAL_CONTADORES
+                                 RET                        
 ;----------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------
         COMMON      INTVEC

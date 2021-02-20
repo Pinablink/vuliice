@@ -36,7 +36,7 @@ ActionState=1
 Enabled=0
 ShowSource=1
 [DebugChecksum]
-Checksum=2122462567
+Checksum=745560090
 [State Storage]
 Control Register=0
 [EEM State Storage]
@@ -52,6 +52,9 @@ State Storage=0
 ShowArgs=0
 [Disassembly]
 MixedMode=1
+[SfrWindow]
+Show=1 1
+Sort=4 0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -68,8 +71,10 @@ Graph=0
 Symbiont=0
 Exclusions=
 [Breakpoints]
-Bp0=_ "STD_CODE" "{$PROJ_DIR$\asm.s43}.49.1" 1 0 0 0 "" 0 ""
-Count=1
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\func\vulIiceFunc.s43}.162.1" 1 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\func\vulIiceFunc.s43}.118.1" 1 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\func\vulIiceFunc.s43}.174.1" 1 0 0 0 "" 0 ""
+Count=3
 [FET]
 Clock mode=38
 Extended Clock mode=-1

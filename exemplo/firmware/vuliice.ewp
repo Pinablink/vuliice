@@ -1966,9 +1966,6 @@
     <name>$PROJ_DIR$\asm.s43</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\VulIice.s43</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\header\VulIice_Oper.h</name>
   </file>
   <file>

@@ -4,12 +4,12 @@
 ;----------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------
         NAME   VULIICE_FAC_MESSAGE
-        PUBLIC CRIAR_ERROR_ESTRUTURAL_MSG, CRIAR_ERROR_ESTRUTURAL_QT_MARKS
+        PUBLIC CRIAR_ERROR_ESTRUTURAL_MSG, CRIAR_ERROR_ESTRUTURAL_QT_MARKS, CRIAR_MENSAGEM_JSON_INEXISTENTE, CRIAR_MENSAGEM_VIRGULA_FINALIZACAO_ERRO, CRIAR_MENSAGEM_OBJETO_INTERNO_ERRO, CRIAR_MENSAGEM_RETORNO_SUCESSO, CRIAR_MENSAGEM_LINHA_NO_CHAVE
         RSEG   CODE   
 ;----------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------
-CRIAR_ERROR_ESTRUTURAL_MSG
-;---------------------------------------------------------------------------------------------- 
+CMSG_ERRO_ESTRUTURA_CABECALHO
+;----------------------------------------------------------------------------------------------
                             MOV.B     #07BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
@@ -118,132 +118,115 @@ CRIAR_ERROR_ESTRUTURAL_MSG
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #02CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #00AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            RET
+;---------------------------------------------------------------------------------------------- 
+;----------------------------------------------------------------------------------------------
+CMSG_ESTRUTURA_RODAPE
+;----------------------------------------------------------------------------------------------
                             MOV.B     #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #00AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #07DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #00AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     SUPORTE_CONTADOR_SERIAL_1,&LEN_I_MESSAGE
+                            RET
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+CRIAR_ERROR_ESTRUTURAL_MSG
+;---------------------------------------------------------------------------------------------- 
+                            CALL      #CMSG_ERRO_ESTRUTURA_CABECALHO
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #063H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #061H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #075H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #073H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #03AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #055H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #059H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #042H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #041H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #049H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #055H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #046H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #046H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #049H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #049H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            CALL      #CMSG_ESTRUTURA_RODAPE
                             RET
 ;----------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------
 CRIAR_ERROR_ESTRUTURAL_QT_MARKS
 ;---------------------------------------------------------------------------------------------- 
-                            MOV.B     #07BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #00AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #020H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #020H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #076H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #075H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #06CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #049H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #069H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #063H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #03AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #02CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #00AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #06DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #073H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #073H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #061H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #067H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #03AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #04AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #055H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #02CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #00AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
-                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            CALL      #CMSG_ERRO_ESTRUTURA_CABECALHO
                             MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #063H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
@@ -254,7 +237,7 @@ CRIAR_ERROR_ESTRUTURAL_QT_MARKS
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #073H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #061H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
@@ -320,15 +303,473 @@ CRIAR_ERROR_ESTRUTURAL_QT_MARKS
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            CALL      #CMSG_ESTRUTURA_RODAPE
+                            RET
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+CRIAR_MENSAGEM_JSON_INEXISTENTE
+;---------------------------------------------------------------------------------------------- 
+                            CALL      #CMSG_ERRO_ESTRUTURA_CABECALHO
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #063H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #061H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #075H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #073H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #03AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #055H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #057H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #055H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #055H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            CALL      #CMSG_ESTRUTURA_RODAPE
+                            RET
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+CRIAR_MENSAGEM_VIRGULA_FINALIZACAO_ERRO
+;---------------------------------------------------------------------------------------------- 
+                            CALL      #CMSG_ERRO_ESTRUTURA_CABECALHO
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #063H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #061H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #075H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #073H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #03AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #041H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #049H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #047H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #041H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #057H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #044H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            CALL      #CMSG_ESTRUTURA_RODAPE
+                            RET
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+CRIAR_MENSAGEM_OBJETO_INTERNO_ERRO
+;---------------------------------------------------------------------------------------------- 
+                            CALL      #CMSG_ERRO_ESTRUTURA_CABECALHO
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #063H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #061H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #075H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #073H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #03AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #049H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #042H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #050H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #041H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #049H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #042H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #044H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #055H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #050H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #049H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #041H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #044H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #055H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #059H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #042H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #041H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            CALL      #CMSG_ESTRUTURA_RODAPE
+                            RET
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+CRIAR_MENSAGEM_LINHA_NO_CHAVE
+;---------------------------------------------------------------------------------------------- 
+                            CALL      #CMSG_ERRO_ESTRUTURA_CABECALHO 
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #063H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #061H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #075H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #073H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #03AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #051H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #055H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #041H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #049H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #041H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #055H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #057H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #059H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04EH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #054H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            CALL      #CMSG_ESTRUTURA_RODAPE
+                            RET
+;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------
+CRIAR_MENSAGEM_RETORNO_SUCESSO
+;---------------------------------------------------------------------------------------------- 
+                            MOV.B     #07BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #00AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     #07DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     SUPORTE_CONTADOR_SERIAL_1,&LEN_I_MESSAGE
+                            MOV.B     #076H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #075H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #06CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #049H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #069H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #063H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #03AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #02CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #00AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #06DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #073H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #073H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #061H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #067H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #065H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #03AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #04FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #050H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #052H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #05FH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #055H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #043H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #045H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #053H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            INC.B     SUPORTE_CONTADOR_SERIAL_1
+                            CALL      #CMSG_ESTRUTURA_RODAPE
                             RET
-;----------------------------------------------------------------------------------------------
+;----------------------------------------------------------------------------------------------                            
 ;----------------------------------------------------------------------------------------------
         END
 ;----------------------------------------------------------------------------------------------
