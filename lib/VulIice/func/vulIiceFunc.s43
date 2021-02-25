@@ -103,7 +103,7 @@ CONTINUE_LOOP:              CMP.B    #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_
                             CMP.B    #07BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
                             JEQ      ABERTURA_JSON
                             
-                            CMP.B    #07BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            CMP.B    #05BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
                             JEQ      ABERTURA_COLECAO
                             
                             CMP.B    #05DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
@@ -162,7 +162,7 @@ VER_CONTEUDO:               BIT.W   #BIT3,JSON_STRUCT_STATUS
 VER_FECHAMENTO:             BIT.W   #BIT2,JSON_STRUCT_STATUS
                             JC      CONTEUDO_CHAVE_OK
                             JMP     ERRO_UNK_CHAVE_CONTEUDO
-CONTEUDO_CHAVE_OK:          NOP
+CONTEUDO_CHAVE_OK:          NOP     ; VERIFICA SE TEM AO MENOS 1 CARACTER NO CONTEUDO
                             JMP     CTR_LOOP ; >>>  
 ERRO_ESTRUTURAL:            MOV.B   #IBYTE_ERRO_FORMATO_UNKNOW_JSON,&CONF_STATUS_PROCESS
                             JMP     CONTINUE_OUT    
@@ -170,11 +170,14 @@ ERRO_UNK_CHAVE_CONTEUDO:    MOV.B   #IBYTE_ERRO_QUOT_MARKS_UNK_KEY_CONTEN,&CONF_
                             JMP     CONTINUE_OUT                            
 ;--------------------------- FIM DA AREA DE ANALISE DE INCLUSAO DE : --------------------------------------------
 ;---------------------------- AREA DE ANALISE DE ABERTURA DE [ OU ] PARA COLEÇÃO --------------------------------
-ABERTURA_COLECAO:           NOP
-                            JMP     CTR_LOOP ; >>> 
-
-FECHAMENTO_COLECAO:         NOP 
-                            JMP     CTR_LOOP ; >>> 
+ABERTURA_COLECAO:           CMP.W   #00FH,JSON_STRUCT_STATUS ; #BIT0+BIT1+BIT2+BIT3 LIGADOS
+                            JEQ     NAO_PERMITIDO_COLL
+                            MOV.B   #IBYTE_ERRO_FORMATO_UNKNOW_JSON,&CONF_STATUS_PROCESS
+                            JMP     CONTINUE_OUT    
+NAO_PERMITIDO_COLL:         MOV.B   #IBYTE_ERRO_COLLECTION_THIS_VERSION,&CONF_STATUS_PROCESS
+                            JMP     CONTINUE_OUT    
+FECHAMENTO_COLECAO:         MOV.B   #IBYTE_ERRO_QUOT_MARKS_UNK_KEY_CONTEN,&CONF_STATUS_PROCESS
+                            JMP     CONTINUE_OUT
 ;----------------------------------------------------------------------------------------------------------------
 
 
@@ -212,10 +215,10 @@ ERROR_FECHAMENTO_INVALIDO:  MOV.B    #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATU
 
 ;--------------------------- AREA DE ANALISE DE " ---------------------------------------------------------------
 ASPAS_CTR:                   BIT.W   #BIT1,JSON_STRUCT_STATUS; VERIFICA SE JÁ HOUVE ABERTURA DE ASPAS
-                             JC      VER_DADO_CONTEUDO
+                             JC      ASPAS_FECHAMENTO
                              JEQ     ABRINDO_CHAVE
 
-VER_DADO_CONTEUDO:           NOP
+ASPAS_FECHAMENTO:            BIS.W   #BIT2+BIT3,JSON_STRUCT_STATUS ; IMPLEMENTAR QUANDO FOR TRABALHAR COM CONTEUDO. FORÇANDO PARA TRABALHAR COM O PROCESSAMENTO
                              JMP     CTR_LOOP ; >>>
 
 
