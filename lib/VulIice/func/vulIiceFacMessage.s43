@@ -846,7 +846,7 @@ CRIAR_MENSAGEM_CARACTER_NAO_COMPATIVEL
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
-                            MOV.B     &03E1H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
+                            MOV.B     &REG_CARACTER_INVALIDO,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
                             MOV.B     #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_1)
                             INC.B     SUPORTE_CONTADOR_SERIAL_1
