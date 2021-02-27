@@ -6,43 +6,37 @@
   <configuration>
     <name>Debug</name>
     <outputs>
+      <file>$TOOLKIT_DIR$\inc\msp430g2553.h</file>
+      <file>$PROJ_DIR$\Debug\Exe\vuliice.d43</file>
+      <file>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\header\VulIice_Oper.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\vulIiceFacMessage.r43</file>
+      <file>$TOOLKIT_DIR$\config\lnk430G2553.xcl</file>
+      <file>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\func\vulIiceFacMessage.s43</file>
+      <file>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\func\vulIiceFunc.s43</file>
       <file>$PROJ_DIR$\Debug\Obj\asm.r43</file>
       <file>$PROJ_DIR$\asm.s43</file>
-      <file>$PROJ_DIR$\Debug\Obj\vulIiceFacMessage.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\vulIiceFunc.r43</file>
-      <file>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\func\vulIiceFunc.s43</file>
-      <file>$TOOLKIT_DIR$\inc\msp430g2553.h</file>
-      <file>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\func\vulIiceFacMessage.s43</file>
-      <file>$PROJ_DIR$\Debug\Exe\vuliice.d43</file>
-      <file>$TOOLKIT_DIR$\config\lnk430G2553.xcl</file>
-      <file>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\header\VulIice_Oper.h</file>
     </outputs>
     <file>
       <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 7</file>
+          <file> 1</file>
         </tool>
       </outputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\asm.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 0</file>
-        </tool>
-      </outputs>
+      <name>$PROJ_DIR$\Debug\Exe\vuliice.d43</name>
       <inputs>
         <tool>
-          <name>A430</name>
-          <file> 5 9</file>
+          <name>XLINK</name>
+          <file> 4 7 3 9</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\func\vulIiceFunc.s43</name>
+      <name>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\func\vulIiceFacMessage.s43</name>
       <outputs>
         <tool>
           <name>A430</name>
@@ -52,31 +46,37 @@
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 5 9</file>
+          <file> 0 2</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\func\vulIiceFacMessage.s43</name>
+      <name>$PROJ_DIR$\..\..\..\..\libMSP430\VulIice\func\vulIiceFunc.s43</name>
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 2</file>
+          <file> 9</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 5 9</file>
+          <file> 0 2</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\Debug\Exe\vuliice.d43</name>
+      <name>$PROJ_DIR$\asm.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 7</file>
+        </tool>
+      </outputs>
       <inputs>
         <tool>
-          <name>XLINK</name>
-          <file> 8 0 2 3</file>
+          <name>A430</name>
+          <file> 0 2</file>
         </tool>
       </inputs>
     </file>

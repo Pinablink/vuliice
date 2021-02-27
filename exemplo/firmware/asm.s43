@@ -5,7 +5,7 @@
 ;----------------------------------------------------------------------------------------------
         NAME    MAIN   
         PUBLIC  MAIN
-        EXTERN PROCESSAMENTO_ENTRADA, VALIDAR_CONTEUDO, EXCLUIR_MENSAGEM, CRIAR_ERROR_ESTRUTURAL_MSG, CRIAR_ERROR_ESTRUTURAL_QT_MARKS, LIMPA_SERIAL_CONTADORES, EXCLUIR_MENSAGEM_ENVIADA, RETORNO_MENSAGEM, CRIAR_MENSAGEM_JSON_INEXISTENTE, CRIAR_MENSAGEM_VIRGULA_FINALIZACAO_ERRO, CRIAR_MENSAGEM_OBJETO_INTERNO_ERRO, CRIAR_MENSAGEM_RETORNO_SUCESSO, CRIAR_MENSAGEM_LINHA_NO_CHAVE, CRIAR_MENSAGEM_CARACTER_NAO_COMPATIVEL, CRIAR_MENSAGEM_COLECAO_SEM_SUPORTE, LIMPA_RECURSOS
+        EXTERN PROCESSAMENTO_ENTRADA, VALIDAR_CONTEUDO, EXCLUIR_MENSAGEM, CRIAR_ERROR_ESTRUTURAL_MSG, CRIAR_ERROR_ESTRUTURAL_QT_MARKS, LIMPA_SERIAL_CONTADORES, EXCLUIR_MENSAGEM_ENVIADA, RETORNO_MENSAGEM, CRIAR_MENSAGEM_JSON_INEXISTENTE, CRIAR_MENSAGEM_VIRGULA_FINALIZACAO_ERRO, CRIAR_MENSAGEM_OBJETO_INTERNO_ERRO, CRIAR_MENSAGEM_RETORNO_SUCESSO, CRIAR_MENSAGEM_LINHA_NO_CHAVE, CRIAR_MENSAGEM_CARACTER_NAO_COMPATIVEL, CRIAR_MENSAGEM_COLECAO_SEM_SUPORTE, LIMPA_RECURSOS, CRIAR_MENSAGEM_ASPAS_EXCESSO
 ;----------------------------------------------------------------------------------------------
         RSEG    CSTACK                  
         RSEG    CODE                    
@@ -13,12 +13,7 @@
 ;----------------------------------------------------------------------------------------------
 RESET:                  MOV      #SFE(CSTACK), SP
 MAIN:                   MOV.W    #WDTPW+WDTHOLD,&WDTCTL
-                        CMP.B    #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS
-                        JEQ      RUN_
-                        CMP.B    #IBYTE_ERRO_FORMATO_SERIAL_QT_MARK,&CONF_STATUS_PROCESS
-                        JEQ      RUN_
-                        CMP.B    #IBYTE_DADOS_RECEBIDOS,&CONF_STATUS_PROCESS
-                        JEQ      RUN_
+                        NOP
                         CALL     #LIMPAR_REGISTRADORES
                         CALL     #LIMPAR_RAM_500BYTES
                         CALL     #CONFIGURAR_PORTAS 
@@ -139,6 +134,9 @@ VERIFICAR_CONTEUDO:              CALL     #VALIDAR_CONTEUDO
                                  JEQ      D_ERRO_ERRO_SPECIAL_CHARACTER   
                                  CMP.B    #IBYTE_ERRO_COLLECTION_THIS_VERSION,&CONF_STATUS_PROCESS 
                                  JEQ      D_ERRO_COLLECTION_THIS_VERSION
+                                 CMP.B    #IBYTE_ERRO_QUOTATION_MARKS_EXCESS,&CONF_STATUS_PROCESS
+                                 JEQ      D_ERRO_QUOTATION_MARKS_EXCESS
+                        
                         
                                  JMP      GOGO
 D_ERRO_ESTRUTURAL:               CALL     #EXCLUIR_MENSAGEM
@@ -167,7 +165,11 @@ D_ERRO_ERRO_SPECIAL_CHARACTER:   CALL     #EXCLUIR_MENSAGEM
                                  
 D_ERRO_COLLECTION_THIS_VERSION:  CALL     #EXCLUIR_MENSAGEM
                                  CALL     #CRIAR_MENSAGEM_COLECAO_SEM_SUPORTE
-                                 JMP      FINGO                                 
+                                 JMP      FINGO   
+                                 
+D_ERRO_QUOTATION_MARKS_EXCESS:   CALL     #EXCLUIR_MENSAGEM
+                                 CALL     #CRIAR_MENSAGEM_ASPAS_EXCESSO
+                                 JMP      FINGO
 
 GOGO:                            BIC.B    #BIT0,&P1OUT
                                  BIS.B    #BIT6,&P1OUT

@@ -11,12 +11,14 @@
 ;----------------------------------------------------------------------------------------------
 LIMPA_RECURSOS
 ;----------------------------------------------------------------------------------------------
-                        MOV.B    #000H,&LEN_KEY_CONTENT 
-                        MOV.B    #000H,&LEN_VALUE_CONTENT
-                        MOV.B    #000H,&CARAC_SPACE_
-                        MOV.B    #000H,&REG_CARACTER_INVALIDO
-                        MOV.B    #000H,&INDICE_CTR_LOOP_LIMITE
-                        CALL     #LIMPA_SERIAL_CONTADORES
+                            MOV.B    #000H,&LEN_KEY_CONTENT 
+                            MOV.B    #000H,&LEN_VALUE_CONTENT
+                            MOV.B    #000H,&CARAC_SPACE_
+                            MOV.B    #000H,&REG_CARACTER_INVALIDO
+                            MOV.B    #000H,&INDICE_CTR_LOOP_LIMITE
+                            MOV.B    #000H,&POS_ATRIB
+                            MOV.W    #00000H,JSON_STRUCT_STATUS
+                            CALL     #LIMPA_SERIAL_CONTADORES
 ;----------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------
 LIMPA_SERIAL_CONTADORES
@@ -172,13 +174,15 @@ VER_CONTEUDO:               BIT.W   #BIT3,JSON_STRUCT_STATUS
 VER_FECHAMENTO:             BIT.W   #BIT2,JSON_STRUCT_STATUS
                             JC      CONTEUDO_CHAVE_OK
                             JMP     ERRO_UNK_CHAVE_CONTEUDO
-CONTEUDO_CHAVE_OK:          NOP     ; VERIFICA SE TEM AO MENOS 1 CARACTER NO CONTEUDO
+CONTEUDO_CHAVE_OK:          BIC.B   #BIT1,JSON_STRUCT_STATUS ; PREPARANDO PARA RECEBER NOVO CONTEUDO
+                            BIC.B   #BIT2,JSON_STRUCT_STATUS ; PREPARANDO PARA RECEBER NOVO CONTEUDO
                             JMP     CTR_LOOP ; >>>  
 ERRO_ESTRUTURAL:            MOV.B   #IBYTE_ERRO_FORMATO_UNKNOW_JSON,&CONF_STATUS_PROCESS
                             JMP     CONTINUE_OUT    
 ERRO_UNK_CHAVE_CONTEUDO:    MOV.B   #IBYTE_ERRO_QUOT_MARKS_UNK_KEY_CONTEN,&CONF_STATUS_PROCESS
                             JMP     CONTINUE_OUT                            
 ;--------------------------- FIM DA AREA DE ANALISE DE INCLUSAO DE : --------------------------------------------
+
 ;---------------------------- AREA DE ANALISE DE ABERTURA DE [ OU ] PARA COLEÇÃO --------------------------------
 ABERTURA_COLECAO:           CMP.W   #00FH,JSON_STRUCT_STATUS ; #BIT0+BIT1+BIT2+BIT3 LIGADOS
                             JEQ     NAO_PERMITIDO_COLL
@@ -204,11 +208,11 @@ VER_CARACTER1:              BIT.W   #BIT1,JSON_STRUCT_STATUS; VERIFICA SE JÁ HOU
                             JNZ     CTR_LOOP_CLS ; VAI PARA O CONTROLE DE LOOP E LIMPA RECURSOS  >>>
                             JMP     ERRO_ESTRUTURAL    
 
-VER_CARACTER2:              BIT.W   #BIT3,JSON_STRUCT_STATUS ; VERIFICA SE CONTEUDO DE CHAVE FOI INFORMADO
+VER_CARACTER2:              BIT.W   #BIT3,JSON_STRUCT_STATUS ; VERIFICA SE O CONTEUDO EM PROCESSAMENTO É DO TIPO CHAVE
                             JC      VER_CARACTER3
                             JMP     INFC1
 
-VER_CARACTER3:              INC.B   &LEN_KEY_CONTENT ; COMPUTA O PROCESSAMENTO DO CARACTER INFORMADO 
+VER_CARACTER3:              INC.B   &LEN_KEY_CONTENT ; COMPUTA O PROCESSAMENTO DO CARACTER INFORMADO. NECESSÁRIO ADICIONAR QUANDO FOR VALOR 
                             JMP     CTR_LOOP ; >>>
 
 
@@ -217,8 +221,7 @@ INFC1:                      MOV.B   #000H,&LEN_KEY_CONTENT
                             INC.B   &LEN_KEY_CONTENT
                             JMP     CTR_LOOP ; >>>
 
-CARACTER_SIT_OK:            
-                            JMP      CTR_LOOP ; >>>      
+CARACTER_SIT_OK:            JMP      CTR_LOOP ; >>>      
 
 ERROR_CARACTER_IN:          MOV.B    #IBYTE_ERRO_SPECIAL_CHARACTER,&CONF_STATUS_PROCESS
                             JMP      CONTINUE_OUT
@@ -248,33 +251,41 @@ ERROR_FECHAMENTO_INVALIDO:  MOV.B    #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATU
 ;--------------------------- AREA DE ANALISE DE " ---------------------------------------------------------------
 ASPAS_CTR:                   BIT.W    #BIT1,JSON_STRUCT_STATUS; VERIFICA SE JÁ HOUVE ABERTURA DE ASPAS
                              JC       V_ASPAS_FECHAMENTO
-                             JEQ      ABRINDO_CHAVE
+                             JEQ      ABRINDO_ASPAS
 
 V_ASPAS_FECHAMENTO:          BIT.W    #BIT2,JSON_STRUCT_STATUS ; VERIFICA SE JÁ HOUVE FECHAMENTO DE ASPAS
                              JC       V_LIMITADOR_CV
-                             
-                             BIT.W    #BIT3,JSON_STRUCT_STATUS ; EFETUAR O FECHAMENTO. VERIFICA SE O CONTEUDO DA CHAVE FOI INFORMADO
-                             JC       VC_INF_OK
-                             
-                             
-VC_INF_OK:                   TST.B    &LEN_KEY_CONTENT    ; CONTEUDO DA CHAVE FOI INFORMADO. VERIFICA O TAMANHO DO CONTEUDO, QUE PRECISA SER AO MENOS MAIOR QUE ZERO E NÃO SER CARACTER EM BRANCO                             
-                             JNZ       VC_INF_OK_DT
-                             MOV.B    #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS ; IMPLEMENTAR UM ERRO MELHOR PARA ESSA SITUAÇÃO 
+                             MOV.B    #000H,&POS_ATRIB
+                             INC.B    &POS_ATRIB 
+                             TST.B    &LEN_KEY_CONTENT    ; CONTEUDO DA CHAVE FOI INFORMADO. VERIFICA O TAMANHO DO CONTEUDO, QUE PRECISA SER AO MENOS MAIOR QUE ZERO E NÃO SER CARACTER EM BRANCO                             
+                             JNZ      VC_INF_OK_DT  
+                             NOP      ; ADICIONA ERRO DE AREA DE ASPAS SEM CONTEUDO
                              JMP      CONTINUE_OUT
                              
-VC_INF_OK_DT:                BIS.W    #BIT2,JSON_STRUCT_STATUS 
+                             ; ------      REFATORANDO ACIMA
+             
+VC_INF_OK_DT:                BIS.W    #BIT2,JSON_STRUCT_STATUS
+                             BIT.W    #BIT3,JSON_STRUCT_STATUS
+                             JC       VALOR_CV_INFORMADO
+                             BIS.W    #BIT3,JSON_STRUCT_STATUS
+                             JMP      CTR_LOOP ; >>>
+                             
+VALOR_CV_INFORMADO:          BIT.W    #BIT4,JSON_STRUCT_STATUS
+                             JC       CV_INFORMADO
+                             JMP      CTR_LOOP ; >>>>>>
+CV_INFORMADO:                BIS.B    #BIT4,JSON_STRUCT_STATUS                          
                              JMP      CTR_LOOP ; >>>
                                        
 V_LIMITADOR_CV:              BIT.W    #BIT5,JSON_STRUCT_STATUS ; VERIFICA SE JÁ NO FECHAMENTO FOI INFORMADO O ":". LIMITADOR DE CHAVE VALOR
                              JC       N_CONT      
-                             MOV.B    #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS ; IMPLEMENTAR AQUI ERRO DE ASPAS DUPLICADAS 
+                             MOV.B    #IBYTE_ERRO_QUOTATION_MARKS_EXCESS,&CONF_STATUS_PROCESS ; EXCESSO DE ASPAS
                              JMP      CONTINUE_OUT
                              
-N_CONT:                      NOP ; IMPLEMENTAR AQUI CONTINUAÇÃO DO PROCESSAMENTO
+N_CONT:                      
                              JMP     CTR_LOOP ; >>>
 
 
-ABRINDO_CHAVE:              BIS.W    #BIT1,JSON_STRUCT_STATUS
+ABRINDO_ASPAS:              BIS.W    #BIT1,JSON_STRUCT_STATUS
                             JMP      CTR_LOOP ; >>>
 ;--------------------------- FIM AREA DE ANALISE DE " -------------------------------------------------------------
 
