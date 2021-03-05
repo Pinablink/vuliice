@@ -11,7 +11,7 @@
 ;----------------------------------------------------------------------------------------------
 LIMPA_RECURSOS
 ;----------------------------------------------------------------------------------------------
-                            MOV.B    #000H,&LEN_KEY_CONTENT 
+                            MOV.B    #000H,&COUNT_QUOT 
                             MOV.B    #000H,&LEN_VALUE_CONTENT
                             MOV.B    #000H,&CARAC_SPACE_
                             MOV.B    #000H,&REG_CARACTER_INVALIDO
@@ -135,10 +135,13 @@ CONTINUE_LOOP:              CMP.B    #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_
                             ; 030H A 039H -> REPRESENTA NUMEROS | 041H A 05AH -> REPRESENTA CARACTERES EM MAIUSCULO
                             ; 061H A 07AH -> REPRESENTA CARACTERES EM MINUSUCULO
                             ;CMP.B   #030H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)     
-                            MOV.B    #030H,CARACTER ; PONTO DE AVALIAÇÃO
+                            MOV.B    #02FH,CARACTER ; PONTO DE AVALIAÇÃO
                             MOV.B    CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2),&03E1H
                             CMP.B    CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2) ; DESTINO < FONTE = USO DO JNC OK. VERIFICAR DOCUMENTAÇÃO DO mCU PARA MAIS DETALHES
                             JNC      ERROR_CARACTER_IN ; CARACTER ESPECIAL
+                            JZ       ERROR_CARACTER_IN ; CARACTER ESPECIAL - CONTEUDO É IGUAL AO LIMITE
+                            JMP      LIMITE_30_39
+                            ; PONTO A SER RETIRADO
                             MOV.B    #041H,CARACTER ; PONTO DE AVALIAÇÃO
                             CMP.B    CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
                             MOV.B    #000H,&INDICE_CTR_LOOP_LIMITE
@@ -148,6 +151,22 @@ CONTINUE_LOOP:              CMP.B    #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_
                             JMP      FORA_LIMITE_30_41
                             
 ;--------------------------- AREA PARA ANALISE DE CARACTER ESPECIAL ---------------------------------------------   
+LIMITE_30_39:               MOV.B   #039H,CARACTER
+                            CMP.B   CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JNC     CTR_LOOP ; >>>>>
+                            JZ      CTR_LOOP ; >>>>>
+LIMITE_3A_41:               MOV.B   #041H,CARACTER
+                            CMP.B   CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JNC     ERROR_CARACTER_IN
+                            JZ      CTR_LOOP ; >>>>>
+LIMITE_42_5A:               MOV.B   #05AH,CARACTER
+                            CMP.B   CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JNC     CTR_LOOP ; >>>>>
+                            JZ      CTR_LOOP ; >>>>>
+                            NOP
+                            NOP ; IMPLEMENTAR AQUI A CONTINUAÇÃO DO RANGE
+                            JMP  CTR_LOOP ; >>>>
+
 LIMITE_30_41:               CMP.B   #005H,&03E0H
                             JEQ     CARAC_NO_LIMITE
                             INC.B   &INDICE_CTR_LOOP_LIMITE
@@ -195,7 +214,6 @@ FECHAMENTO_COLECAO:         MOV.B   #IBYTE_ERRO_QUOT_MARKS_UNK_KEY_CONTEN,&CONF_
                             JMP     CONTINUE_OUT
 ;----------------------------------------------------------------------------------------------------------------
 
-
 ;--------------------------- AREA DE ANALISE DE INCLUSAO DE CARACTER --------------------------------------------
 VER_CARACTER:               BIT.W   #BIT0,JSON_STRUCT_STATUS ; VERIFICA SE HOUVE ABERTURA DE {
                             JC      VER_CARACTER1
@@ -216,12 +234,12 @@ VER_CARACTER2:              BIT.W   #BIT3,JSON_STRUCT_STATUS ; VERIFICA SE O CON
                             JMP     EH_CHAVE_TP
                             JMP     CTR_LOOP ; >>>   
 
-EH_CHAVE_TP:                INC.B   &LEN_KEY_CONTENT ; COMPUTA O PROCESSAMENTO DO CARACTER INFORMADO. NECESSÁRIO ADICIONAR QUANDO FOR VALOR 
+EH_CHAVE_TP:                // INC.B   &LEN_KEY_CONTENT ; COMPUTA O PROCESSAMENTO DO CARACTER INFORMADO. NECESSÁRIO ADICIONAR QUANDO FOR VALOR 
                             JMP     CTR_LOOP ; >>>
 
 EH_VAL_TP:                  NOP ; AINDA NECESSARIO DESENVOLVER        
                              
-//INFC1:                      MOV.B   #000H,&LEN_KEY_CONTENT
+// INFC1:                      MOV.B   #000H,&LEN_KEY_CONTENT
 //                            BIS.W   #BIT3,JSON_STRUCT_STATUS
 //                            INC.B   &LEN_KEY_CONTENT
 //                            JMP     CTR_LOOP ; >>>
@@ -243,6 +261,7 @@ FINAL_DATA_ATTR:            BIC.B    #BIT1,JSON_STRUCT_STATUS
                             BIC.B    #BIT5,JSON_STRUCT_STATUS
                             BIC.B    #BIT6,JSON_STRUCT_STATUS
                             BIC.B    #BIT7,JSON_STRUCT_STATUS
+                            MOV.B    #000H,&COUNT_QUOT
                             JMP      CTR_LOOP ; >>>       
                             BIT.W    #BIT8,JSON_STRUCT_STATUS
                             JC       DUP_VIRGULA
@@ -288,13 +307,17 @@ ASPAS_CTR:                   BIT.W    #BIT1,JSON_STRUCT_STATUS; VERIFICA SE JÁ H
                              JC       V_ASPAS_FECHAMENTO
                              JEQ      ABRINDO_ASPAS
 
-V_ASPAS_FECHAMENTO:          BIT.W    #BIT2,JSON_STRUCT_STATUS ; VERIFICA SE JÁ HOUVE FECHAMENTO DE ASPAS
+V_ASPAS_FECHAMENTO:          CMP.B    #004H,&COUNT_QUOT
+                             JEQ      QUOT_EXCESS
+                             INC.B    &COUNT_QUOT 
+                             BIT.W    #BIT2,JSON_STRUCT_STATUS ; VERIFICA SE JÁ HOUVE FECHAMENTO DE ASPAS
                              JC       V_LIMITADOR_CV
-                             TST.B    &LEN_KEY_CONTENT    ; CONTEUDO DA CHAVE FOI INFORMADO. VERIFICA O TAMANHO DO CONTEUDO, QUE PRECISA SER AO MENOS MAIOR QUE ZERO E NÃO SER CARACTER EM BRANCO                             
-                             JNZ      VC_INF_OK_DT  
-                             MOV.B    #IBYTE_ERRO_KEY_WITHOUT_VALUE,&CONF_STATUS_PROCESS ; EXCESSO DE ASPAS
-                             JMP      CONTINUE_OUT
-                             
+                             JMP      VC_INF_OK_DT 
+                             // TST.B    &LEN_KEY_CONTENT    ; CONTEUDO DA CHAVE FOI INFORMADO. VERIFICA O TAMANHO DO CONTEUDO, QUE PRECISA SER AO MENOS MAIOR QUE ZERO E NÃO SER CARACTER EM BRANCO                             
+                             // JNZ      VC_INF_OK_DT  
+                             // MOV.B    #IBYTE_ERRO_KEY_WITHOUT_VALUE,&CONF_STATUS_PROCESS ; EXCESSO DE ASPAS
+                             // JMP      CONTINUE_OUT
+                             JMP      CTR_LOOP ; >>>
                              
                              ; ------      REFATORANDO ACIMA
              
@@ -316,6 +339,7 @@ CV_INFORMADO:                BIT.W    #BIT8,JSON_STRUCT_STATUS
                                        
 V_LIMITADOR_CV:              BIT.W    #BIT5,JSON_STRUCT_STATUS ; VERIFICA SE JÁ NO FECHAMENTO FOI INFORMADO O ":". LIMITADOR DE CHAVE VALOR
                              JC       N_CONT      
+QUOT_EXCESS:                 MOV.B    #000H,&COUNT_QUOT
                              MOV.B    #IBYTE_ERRO_QUOTATION_MARKS_EXCESS,&CONF_STATUS_PROCESS ; EXCESSO DE ASPAS
                              JMP      CONTINUE_OUT
                              
@@ -324,6 +348,7 @@ N_CONT:
 
 
 ABRINDO_ASPAS:               BIS.W    #BIT1,JSON_STRUCT_STATUS
+                             INC.B    &COUNT_QUOT 
                              BIT.W    #BIT3,JSON_STRUCT_STATUS
                              JC       CHAVE_OK_INP 
                              JMP      CTR_LOOP ; >>>
