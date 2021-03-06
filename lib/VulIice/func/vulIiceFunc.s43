@@ -114,14 +114,10 @@ CONTINUE_LOOP:              CMP.B    #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_
                             JEQ      ESPACO
                             CMP.B    #07BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
                             JEQ      ABERTURA_JSON
-                            
                             CMP.B    #05BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
                             JEQ      ABERTURA_COLECAO
-                            
                             CMP.B    #05DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
                             JEQ      FECHAMENTO_COLECAO
-                            
-                            
                             CMP.B    #03AH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
                             JEQ      LIMITE_CHAVE_VALOR
                             CMP.B    #022H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
@@ -130,56 +126,36 @@ CONTINUE_LOOP:              CMP.B    #00DH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_
                             JEQ      FECHAMENTO
                             CMP.B    #02CH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
                             JEQ      IN_VIRGULA
-                            CMP.B    #03BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            CMP.B    #03BH,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2) ; FINALIZADOR
                             JEQ      CTR_LOOP ; >>>
-                            ; 030H A 039H -> REPRESENTA NUMEROS | 041H A 05AH -> REPRESENTA CARACTERES EM MAIUSCULO
-                            ; 061H A 07AH -> REPRESENTA CARACTERES EM MINUSUCULO
-                            ;CMP.B   #030H,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)     
                             MOV.B    #02FH,CARACTER ; PONTO DE AVALIAÇÃO
                             MOV.B    CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2),&03E1H
                             CMP.B    CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2) ; DESTINO < FONTE = USO DO JNC OK. VERIFICAR DOCUMENTAÇÃO DO mCU PARA MAIS DETALHES
                             JNC      ERROR_CARACTER_IN ; CARACTER ESPECIAL
                             JZ       ERROR_CARACTER_IN ; CARACTER ESPECIAL - CONTEUDO É IGUAL AO LIMITE
-                            JMP      LIMITE_30_39
-                            ; PONTO A SER RETIRADO
-                            MOV.B    #041H,CARACTER ; PONTO DE AVALIAÇÃO
-                            CMP.B    CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
-                            MOV.B    #000H,&INDICE_CTR_LOOP_LIMITE
-                            MOV.B    CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2),&REG_CARACTER_INVALIDO
-                            JNC      LIMITE_30_41  
-                            JZ       VER_CARACTER
-                            JMP      FORA_LIMITE_30_41
-                            
 ;--------------------------- AREA PARA ANALISE DE CARACTER ESPECIAL ---------------------------------------------   
 LIMITE_30_39:               MOV.B   #039H,CARACTER
                             CMP.B   CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
-                            JNC     CTR_LOOP ; >>>>>
-                            JZ      CTR_LOOP ; >>>>>
+                            JNC     PROC_CARACTER 
+                            JZ      PROC_CARACTER 
 LIMITE_3A_41:               MOV.B   #041H,CARACTER
                             CMP.B   CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
                             JNC     ERROR_CARACTER_IN
-                            JZ      CTR_LOOP ; >>>>>
+                            JZ      PROC_CARACTER 
 LIMITE_42_5A:               MOV.B   #05AH,CARACTER
                             CMP.B   CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
-                            JNC     CTR_LOOP ; >>>>>
-                            JZ      CTR_LOOP ; >>>>>
-                            NOP
-                            NOP ; IMPLEMENTAR AQUI A CONTINUAÇÃO DO RANGE
-                            JMP  CTR_LOOP ; >>>>
-
-LIMITE_30_41:               CMP.B   #005H,&03E0H
-                            JEQ     CARAC_NO_LIMITE
-                            INC.B   &INDICE_CTR_LOOP_LIMITE
-                            DEC.B   CARACTER
+                            JNC     PROC_CARACTER 
+                            JZ      PROC_CARACTER 
+LIMITE_5B_61:               MOV.B   #061H,CARACTER
                             CMP.B   CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
-                            JZ      ERROR_CARACTER_IN
-                            JNC     LIMITE_30_41
-
-FORA_LIMITE_30_41:          NOP
-
-CARAC_NO_LIMITE:            JMP     VER_CARACTER                            
+                            JNC     ERROR_CARACTER_IN
+                            JZ      PROC_CARACTER
+LIMITE_62_7A                MOV.B   #07AH,CARACTER
+                            CMP.B   CARACTER,CONF_IN_SERIAL_DATA(SUPORTE_CONTADOR_SERIAL_2)
+                            JNC     PROC_CARACTER 
+                            JZ      PROC_CARACTER 
+CARACTER_ND:                JMP     ERROR_CARACTER_IN                                                    
 ;--------------------------- FIM DA AREA PARA ANALISE DE CARACTER ESPECIAL --------------------------------------
-
 ;--------------------------- AREA DE ANALISE DE INCLUSAO DE : ---------------------------------------------------
 LIMITE_CHAVE_VALOR:         BIT.W   #BIT0,JSON_STRUCT_STATUS
                             JC      VER_ABERTURA
@@ -202,7 +178,6 @@ ERRO_ESTRUTURAL:            MOV.B   #IBYTE_ERRO_FORMATO_UNKNOW_JSON,&CONF_STATUS
 ERRO_UNK_CHAVE_CONTEUDO:    MOV.B   #IBYTE_ERRO_QUOT_MARKS_UNK_KEY_CONTEN,&CONF_STATUS_PROCESS
                             JMP     CONTINUE_OUT                            
 ;--------------------------- FIM DA AREA DE ANALISE DE INCLUSAO DE : --------------------------------------------
-
 ;---------------------------- AREA DE ANALISE DE ABERTURA DE [ OU ] PARA COLEÇÃO --------------------------------
 ABERTURA_COLECAO:           CMP.W   #00FH,JSON_STRUCT_STATUS ; #BIT0+BIT1+BIT2+BIT3 LIGADOS
                             JEQ     NAO_PERMITIDO_COLL
@@ -213,21 +188,20 @@ NAO_PERMITIDO_COLL:         MOV.B   #IBYTE_ERRO_COLLECTION_THIS_VERSION,&CONF_ST
 FECHAMENTO_COLECAO:         MOV.B   #IBYTE_ERRO_QUOT_MARKS_UNK_KEY_CONTEN,&CONF_STATUS_PROCESS
                             JMP     CONTINUE_OUT
 ;----------------------------------------------------------------------------------------------------------------
-
 ;--------------------------- AREA DE ANALISE DE INCLUSAO DE CARACTER --------------------------------------------
-VER_CARACTER:               BIT.W   #BIT0,JSON_STRUCT_STATUS ; VERIFICA SE HOUVE ABERTURA DE {
-                            JC      VER_CARACTER1
+PROC_CARACTER:              BIT.W   #BIT0,JSON_STRUCT_STATUS ; VERIFICA SE HOUVE ABERTURA DE {
+                            JC      PROC__CARACTER1
                             TST.B   &CARAC_SPACE_
                             JNZ     CTR_LOOP_CLS ; VAI PARA O CONTROLE DE LOOP E LIMPA RECURSOS  >>>
                             MOV.B   #IBYTE_ERRO_FORMATO_UNKNOW_JSON,&CONF_STATUS_PROCESS
                             JMP     CONTINUE_OUT    
-VER_CARACTER1:              BIT.W   #BIT1,JSON_STRUCT_STATUS; VERIFICA SE JÁ HOUVE ABERTURA DE ASPAS
-                            JC      VER_CARACTER2
+PROC__CARACTER1:            BIT.W   #BIT1,JSON_STRUCT_STATUS; VERIFICA SE JÁ HOUVE ABERTURA DE ASPAS
+                            JC      PROC_CARACTER2
                             TST.B   &CARAC_SPACE_
                             JNZ     CTR_LOOP_CLS ; VAI PARA O CONTROLE DE LOOP E LIMPA RECURSOS  >>>
                             JMP     ERRO_ESTRUTURAL    
 
-VER_CARACTER2:              BIT.W   #BIT3,JSON_STRUCT_STATUS ; VERIFICA SE O CONTEUDO EM PROCESSAMENTO É DO TIPO CHAVE
+PROC_CARACTER2:             BIT.W   #BIT3,JSON_STRUCT_STATUS ; VERIFICA SE O CONTEUDO EM PROCESSAMENTO É DO TIPO CHAVE
                             JC      EH_CHAVE_TP
                             BIT.W   #BIT4,JSON_STRUCT_STATUS ; VERIFICA SE O CONTEUDO EM PROCESSAMENTO É DO TIPO VALOR
                             JC      EH_VAL_TP
@@ -301,7 +275,6 @@ N_CONTEUDO:                 MOV.B    #IBYTE_ERRO_FORMATO_UNKNOW_JSON,&CONF_STATU
 ERROR_FECHAMENTO_INVALIDO:  MOV.B    #IBYTE_ERRO_FORMATO_DADO_SERIAL,&CONF_STATUS_PROCESS 
                             JMP      CONTINUE_OUT
 ;--------------------------- FIM DA AREA DE ANALISE DE FECHAMENTO -----------------------------------------------         
-
 ;--------------------------- AREA DE ANALISE DE " ---------------------------------------------------------------
 ASPAS_CTR:                   BIT.W    #BIT1,JSON_STRUCT_STATUS; VERIFICA SE JÁ HOUVE ABERTURA DE ASPAS
                              JC       V_ASPAS_FECHAMENTO
@@ -361,9 +334,7 @@ DIV_CH_VL_OK:                BIS.W    #BIT4,JSON_STRUCT_STATUS
 CLRV:                        BIC.W    #BIT8,JSON_STRUCT_STATUS ; LIMPA O STATUS DE VIRGULA
                              JMP      CTR_LOOP ; >>>
 ;--------------------------- FIM AREA DE ANALISE DE " -------------------------------------------------------------
-
 ;--------------------------- AREA DE INCLUSAO DE [ OU ] -----------------------------------------------------------
-
 ;---------------------------- FIM DA ÁREA DE INCLUSÃO DE [ OU ] ---------------------------------------------------
 
 ABERTURA_JSON:              BIT.W    #BIT0,JSON_STRUCT_STATUS
@@ -376,7 +347,7 @@ QUEBRA:                     NOP
                             JMP      CTR_LOOP
 
 ESPACO:                     MOV.B    #001H,&CARAC_SPACE_
-                            JMP      VER_CARACTER 
+                            JMP      PROC_CARACTER 
 
 CTR_LOOP_CLS:               MOV.B    #000H,&CARAC_SPACE_
 CTR_LOOP:                   CMP.W    SUPORTE_CONTADOR_SERIAL_2,SUPORTE_CONTADOR_SERIAL_1 
